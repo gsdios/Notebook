@@ -1,25 +1,55 @@
-## Swift(未完待续。。。)
+# Swift(未完待续。。。)
 
 
-### 可选型
+## 可选型
 
-optional chaining
+- optional chaining
+可选型是swift语言的特色之一，用于表达一个变量可以有nil和非nil两种状态，表示方法如下：
+```
+var num: Int? = 1
+```
+nil在Objective-C中表示一个空指针；nil在swift中不是空指针，nil是个确定的值，用来表示值缺失
+```
+var view: UIView = nil //报错：Nil cannot initialize specified type 'UIView'
+var view: UIView? = nil //正确
+```
+可选型解包
+```
+// 解包方式1
+var name: String? = "令狐冲"
+if name != nil {
+    print("姓名\(name!)") // 使用!强制解包
+} else {
+    print("name 为 nil")
+}
+
+```
+
+```
+// 解包方式2（官方推荐）
+var name: String? = "令狐冲"
+if let name = name {
+    print("姓名\(name)") // 使用!强制解包
+} else {
+    print("name 为 nil")
+}
+```
 nil coalecse
 隐式可选型
 
-### 枚举
+## 枚举
 raw value
 raw value 与 associate value互斥
 可选型实质上是枚举类型
 枚举也可以定义方法
 
-### 结构体
+## 结构体
 自定义构造函数之后，默认构造函数失效
 可失败构造函数
 结构体和枚举都是值类型，赋值即拷贝
 结构体（和枚举）函数内部修改自身属性值需要在函数前加mutating
 
-### 面向对象
+## 面向对象
 判断类对象是否相等 ===（也可以重载==运算符） （值语义对象是否相等用 ==）
 
 属性和方法
@@ -49,7 +79,7 @@ raw value 与 associate value互斥
 嵌套类型
 
 
-### 泛型
+## 泛型
 
 swift协议
 1.struct和类都可以遵守协议，也可以限制协议只给类遵守，用 : class 标识
@@ -62,7 +92,7 @@ swift协议
 8.异常处理
 9.控制转移：defer
 
-### 类型检查和转换
+## 类型检查和转换
 1.检查 is
 2.转换 as
 3.nsobject anyobject any

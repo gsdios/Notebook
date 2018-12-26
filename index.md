@@ -3,8 +3,7 @@
 
 ## 可选型
 
-- optional chaining
-可选型是swift语言的特色之一，用于表达一个变量可以有nil和非nil两种状态，表示方法如下：
+可选型是swift语言的特色之一，用于表达一个变量/常量可以为nil或者非nil两种状态。可选类型其本质是一个枚举型，包含none和some两种类型。Optional.none就是nil, 非nil的原始值会通过some(T)包装，这也是为什么在使用Optional的时候要拆包的原因, 就是为了从enum里取出来原始值。可选型表示方法如下：
 ```
 var num: Int? = 1
 ```
@@ -26,7 +25,7 @@ if name != nil {
 ```
 
 ```
-// 解包方式2（官方推荐）
+// 使用可选绑定获取可选类型的值（官方推荐）
 var name: String? = "令狐冲"
 if let name = name {
     print("姓名\(name)") // 使用!强制解包
@@ -34,8 +33,43 @@ if let name = name {
     print("name 为 nil")
 }
 ```
-nil coalecse
-隐式可选型
+空合运算符（nil coalecse）“a ?? b” 将对可选类型a进行空判断，如果a非nild就对其进行解包，否则就返回一个默认值b
+```
+var name: String? = "鹿晗"
+var address: String? = nil
+print((name ?? "XXX"),"来自", (address ?? "未知地区"))
+// print结果为：鹿晗 来自 未知地区
+```
+可选链(optional chaining)为一种可以在当前值可能为nil的可选值上请求和调用属性、方法及下标的方法。如果可选值有值，那么调用就会成功；如果可选值是nil，那么调用将返回nil。多个调用可以连接在一起形成一个调用链，如果其中任何一个节点为nil，整个调用链都会失败，即返回nil。
+```
+let name = person.dog?.name?.lowercased()
+```
+变量或常量后加上!的都是隐式可选变量/常量。首先该变量或常量满足可选类型，其可被当成一般的变量/常量来使用，而不需要每次都验证是否有值。
+```
+
+class Dog {
+    weak var owner: Person?
+    init(owner: Person) {
+        self.owner = owner
+    }
+}
+
+class Person {
+    var dog: Dog!
+    init() {
+    
+        /**
+        * 这里我们希望dog在Person初始化之后即可立即使用所以在这里dog不应该设置为可选型。
+        * 如果dog不是可选型 self.dog = Dog(owner: self)这行代码就会报错如下：
+        * 'self' used before all stored properties are initialized
+        * 原因是我们必须在Person所有的非可选型存储变量初始化之后才可以使用self变量，而这里
+        * 我们的Dog初始化又需要一个Person类型参数，在这种情况下就可以将dog设置为隐式可选型
+        */
+        self.dog = Dog(owner: self) 
+    }
+}
+
+```
 
 ## 枚举
 raw value

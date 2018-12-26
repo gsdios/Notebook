@@ -3,11 +3,11 @@
 
 ## 可选型
 
-可选型是swift语言的特色之一，用于表达一个变量/常量可以为nil或者非nil两种状态。可选类型其本质是一个枚举型，包含none和some两种类型。Optional.none就是nil, 非nil的原始值会通过some(T)包装，这也是为什么在使用Optional的时候要拆包的原因, 就是为了从enum里取出来原始值。可选型表示方法如下：
+可选型是Swift语言的特色之一，用于表达一个变量/常量可以为nil或者非nil两种状态。可选类型其本质是一个枚举型，包含none和some两种类型。Optional.none就是nil, 非nil的原始值会通过some(T)包装，这也是为什么在使用Optional的时候要拆包的原因, 就是为了从enum里取出来原始值。可选型表示方法如下：
 ```
 var num: Int? = 1
 ```
-nil在Objective-C中表示一个空指针；nil在swift中不是空指针，nil是个确定的值，用来表示值缺失
+nil在Objective-C中表示一个空指针；nil在Swift中不是空指针，nil是个确定的值，用来表示值缺失
 ```
 var view: UIView = nil //报错：Nil cannot initialize specified type 'UIView'
 var view: UIView? = nil //正确
@@ -75,6 +75,176 @@ class Person {
 ```
 
 ## 枚举
+与OC中枚举只能是int类型不同，Swift的枚举支持的数据类型有很多，例如整型(Integer)、浮点数(Float Point)、符串(String)等
+```
+enum Movement:Int {
+    case left = 0
+    case right = 1
+    case top = 2
+    case bottom = 3
+}
+
+enum Area: String {
+    case SH = "shanghai"
+    case GZ = "guangzhou"
+    case SZ = "shenzhen"
+}
+
+enum Animal {
+    case cat
+    case dog
+    case pig
+}
+
+```
+### 嵌套枚举
+```
+enum Area {
+    enum ShenZhen {
+        case NanShan
+        case FuTian
+    }
+
+    enum GuangZhou {
+        case TianHe
+        case CheBei
+    }
+}
+
+```
+### 关联值
+
+```
+// 声明枚举Trade
+enum Trade {
+    case buy(stock:String, amount:Int)
+    case sell(stock:String, amount:Int)
+}
+
+// 使用枚举Tbrade
+
+let trade = Trade.buy(stock: "00700", amount: 100)
+
+switch trade {
+    case .buy(let stock,let amount):
+        print("\(trade) 股票:\(stock), 数量:\(amount)")
+        
+    case .sell(let stock,let amount):
+        print("\(trade) 股票:\(stock), 数量:\(amount)")
+}
+
+// print输出： buy(stock: "00700", amount: 100) 股票:00700, 数量:100
+
+```
+### 方法和属性
+```
+enum Device {
+    case iPad, iPhone, AppleTV, AppleWatch
+    
+    func introduced() -> String {
+        switch self {
+            case .iPad: return "This is iPad"
+            case .iPhone: return "This is iPhone"
+            case .AppleWatch: return "This is AppleWatch"
+            case .AppleTV: return "This is AppleTV"
+        }
+    }
+}
+
+print(Device.iPhone.introduced())
+
+// print输出：This is iPhone
+```
+
+增加一个存储属性到枚举中不被允许，但你依然能够创建计算型属性。
+
+```
+enum Device {
+    case iPad, iPhone
+    var price: Double {
+        switch self {
+            case .iPhone: return 8000.0
+            case .iPad: return 6000.0
+        }
+    }
+}
+```
+
+### 枚举&协议
+Swift也允许你在枚举中使用协议(Protocols)和协议扩展(Protocol Extension)。
+
+```
+例：Swift标准库中有一个CustomStringConvertible是一个定义了格式化输出的Api的协议。
+
+protocol CustomStringConvertible {
+    var description: String { get }
+}
+
+
+
+enum Trade: CustomStringConvertible{
+    case buy(stock:String, amount:Int)
+    case sell(stock:String, amount:Int)
+
+    var description: String {
+        switch self {
+            case .buy(let stock,let amount):
+                return " 股票:\(stock), 数量:\(amount)"
+            case .sell(let stock,let amount):
+                return " 股票:\(stock), 数量:\(amount)"
+        }
+    }
+}
+
+print(Trade.buy(stock: "00700", amount: 100).description)
+
+// print输出： 股票:00700, 数量:100
+
+```
+### 枚举的扩展
+枚举也可以进行扩展，我们可以将枚举的case和method分离使得代码的可读性更强。
+
+```
+enum Trade {
+    case buy(stock:String, amount:Int)
+    case sell(stock:String, amount:Int)
+}
+
+extension Trade: CustomStringConvertible {
+    var description: String {
+        switch self {
+            case .buy(let stock,let amount):
+                return " 股票:\(stock), 数量:\(amount)"
+            case .sell(let stock,let amount):
+                return " 股票:\(stock), 数量:\(amount)"
+        }
+    }
+}
+
+print(Trade.buy(stock: "00700", amount: 100).description)
+
+// print输出： 股票:00700, 数量:100
+```
+### 枚举&泛型
+```
+enum Theme<T: UIView> {
+    case day(T)
+    case night(T)
+
+    func apply() {
+        switch self {
+            case .day(let view):
+                view.backgroundColor = UIColor.white
+            case .night(let view):
+                view.backgroundColor = UIColor.black
+        }
+    }
+}
+
+let v = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+Theme.night(v).apply()
+```
+
 raw value
 raw value 与 associate value互斥
 可选型实质上是枚举类型

@@ -12,7 +12,7 @@ nil在Objective-C中表示一个空指针；nil在swift中不是空指针，nil�
 var view: UIView = nil //报错：Nil cannot initialize specified type 'UIView'
 var view: UIView? = nil //正确
 ```
-可选型解包
+### 可选型解包
 ```
 // 解包方式1
 var name: String? = "令狐冲"
@@ -33,6 +33,7 @@ if let name = name {
     print("name 为 nil")
 }
 ```
+### 空合运算符
 空合运算符（nil coalecse）“a ?? b” 将对可选类型a进行空判断，如果a非nild就对其进行解包，否则就返回一个默认值b
 ```
 var name: String? = "鹿晗"
@@ -40,11 +41,13 @@ var address: String? = nil
 print((name ?? "XXX"),"来自", (address ?? "未知地区"))
 // print结果为：鹿晗 来自 未知地区
 ```
+### 可选链
 可选链(optional chaining)为一种可以在当前值可能为nil的可选值上请求和调用属性、方法及下标的方法。如果可选值有值，那么调用就会成功；如果可选值是nil，那么调用将返回nil。多个调用可以连接在一起形成一个调用链，如果其中任何一个节点为nil，整个调用链都会失败，即返回nil。
 ```
 let name = person.dog?.name?.lowercased()
 ```
-变量或常量后加上!的都是隐式可选变量/常量。首先该变量或常量满足可选类型，其可被当成一般的变量/常量来使用，而不需要每次都验证是否有值。
+### 隐式可选型
+变量或常量后加上!的都是隐式可选变量/常量。首先该变量或常量满足可选类型，其可被当成一般的变量/常量来使用，而不需要每次都验证是否有值。隐式可选型主要用在一个变量/常量在定义瞬间完成之后值一定会存在的情况，例如在类的初始化过程中等。
 ```
 
 class Dog {

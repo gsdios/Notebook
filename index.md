@@ -412,9 +412,13 @@ class Person {
 
 ## 访问控制
 
-1.private表示只能在当前类里访问(注:swift4.0中,extension里可以访问private属性)
+1.private
 
-2.fileprivate表示在当前swift源文件里可以访问
+表示只能在当前类里访问(注:swift4.0中,extension里可以访问private属性)
+
+2.fileprivate
+
+表示在当前swift源文件里可以访问
 
 3.internal(默认访问级别，可不写)
 
@@ -424,9 +428,13 @@ class Person {
 
 - 如果是app代码，在整个app都可以访问
 
-4.public表示可以被任何人访问，但在其他module中不可以被override和继承，而在module内可以被override和继承
+4.public
 
-5.open表示可以被任何人使用，包括override和继承
+表示可以被任何人访问，但在其他module中不可以被override和继承，而在module内可以被override和继承
+
+5.open
+
+表示可以被任何人使用，包括override和继承
 
 ### Modules和源文件
 

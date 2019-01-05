@@ -286,86 +286,97 @@ struct是值类型而class是引用类型，值类型的变量直接包含他们
 - 结构体不使用引用计数（值类型）
 
 
+### mutating关键字
 
+Swift中结构体和枚举可以定义自己的方法，但是默认情况下实例方法中是不可以修改自身属性值，当你需要修改自身属性值需要在函数前加mutating
 
+```
+struct Point {
+    var x = 0, y = 0
 
+    mutating func move() {
+        x += 1
+        y += 1
+    }
+}
 
-
-
-# ====================================================================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###
-
-
-
-###
-
-
-
-
-###
-
-
-
-
-
-
-###
-
-
-
-
-
-###
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-自定义构造函数之后，默认构造函数失效
-
-可失败构造函数
-
-结构体和枚举都是值类型，赋值即拷贝
-
-结构体（和枚举）函数内部修改自身属性值需要在函数前加mutating
+```
 
 
 ## 面向对象
-判断类对象是否相等 ===（也可以重载==运算符） （值语义对象是否相等用 ==）
+
+### 属性
+- 存储型属性
+存储型属性就是存储特定类的一个常量或者变量。常量存储的属性使用let关键字定义，变量存储的属性使用var关键字定义
+
+```
+class Test {
+    var propertyA: Int?
+    let propertyB: Int = 10
+}
+```
+
+- 懒存储属性
+懒存储属性是指当被第一次调用的时候才会生成其初始值的属性，一个懒存储属性通过在属性声明的前面加上lazy来标示
+
+```
+class Person {
+    lazy var propertyLazy: Test = Test()
+}
+```
+
+- 计算型属性
+计算型属性不存储值，它需要提供getter或setter来进行获取值或者赋值（赋值需要另外声明一个变量用于存储值）。getter使用get关键字进行定义，setter使用set关键字进行定义
+
+```
+class Person {
+    var height: Double {
+        get {
+            return 180.0
+        }
+    }
+}
+```
+
+- 属性观察器
+属性观察器包括willSet和didSet，其中属性值改变前会触发willSet，属性改变后会触发didSet
+(1)willSet有一个名为newValue的默认参数代表即将设置的新值
+(2)didSet有一个名为oldValue的默认参数代表修改之前的旧值
+(3)属性初始化时，willSet和didSet不会调用。只有在初始上下文之外，当设置属性值时才会调用。另外，在didSet的实现体内给属性赋值，也不会再次调用属性的属性观察器
+(4)即使是设置的值和原来的值相同，willSet和didSet也会被调用
+
+```
+class Person {
+    var age: Int {
+        willSet {
+            print("willSet, newValue =", newValue)
+        }
+        didSet {
+            print("didSet, oldValue =", oldValue)
+        }
+    }
+
+    init() {
+        age = 10
+    }
+}
+
+```
+- 类型属性
+类型属性与实例对象无关，不需要对类进行实例化就可以使用。
+类型属性使用关键字static来定义，结构体、枚举和类都可以定义类型属性。在为类定义类型属性时，可以使用class关键字来代替static关键字。跟实例的存储属性不同，类型的存储属性必须指定默认值，因为类型本身无法在初始化过程中使用构造器给类型属性赋值
+
+```
+class Person {
+    static var propertyA: Int = 10
+    static var propertyB: Int {
+        return 20
+    }
+    class var propertyC: String {
+        return "TTTTTTT"
+    }
+}
+```
 
 
 属性和方法

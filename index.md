@@ -448,10 +448,103 @@ Swift 的访问控制模型是基于 module 和 源文件的。在 Swift 文档�
 
 
 
+## 运算符重载
 
 
 
 
+```
+struct Test {
+    var x: Int
+    var y: Int
+    var z: Int
+}
+
+func + (left: Test, right: Test) -> Test {
+    return Test(x: left.x + right.x, y: left.y + right.y, z: left.z + right.z)
+}
+
+func - (left: Test, right: Test) -> Test {
+    return Test(x: left.x - right.x, y: left.y - right.y, z: left.z - right.z)
+}
+
+func * (left: Test, right: Test) -> Test {
+    return Test(x: left.x * right.x, y: left.y * right.y, z: left.z * right.z)
+}
+
+func / (left: Test, right: Test) -> Test {
+    return Test(x: left.x / right.x, y: left.y / right.y, z: left.z / right.z)
+}
+
+func == (left: Test, right: Test) -> Bool {
+    return left.x == right.x && left.y == right.y && left.z == right.z
+}
+
+func > (left: Test, right: Test) -> Bool {
+    return left.x > right.x || left.y > right.y || left.z == right.z
+}
+
+func >= (left: Test, right: Test) -> Bool {
+    return left == right || left > right
+}
+
+func < (left: Test, right: Test) -> Bool {
+    return !(left >= right)
+}
+
+func += (left: inout Test, right: Test) {
+    left = left + right
+}
+
+func -= (left: inout Test, right: Test) {
+    left = left - right
+}
+
+prefix func - (left: Test) -> Test {
+    return Test(x: -left.x, y: -left.y, z: -left.z)
+}
+
+
+let t1 = Test(x: 2, y: 4, z: 6)
+let t2 = Test(x: 1, y: 2, z: 3)
+
+print("t1 + t2 = ", t1 + t2)
+print("t1 - t2 = ", t1 - t2)
+print("t1 * t2 = ", t1 * t2)
+print("t1 / t2 = ", t1 / t2)
+print("t1 > t2 = ", t1 > t2)
+print("t1 == t2 = ", t1 == t2)
+print("t1 >= t2 = ", t1 >= t2)
+print("t1 < t2 = ", t1 < t2)
+
+var tmpT1 = t1
+let tmpT2 = t2
+tmpT1 += tmpT2
+print("tmpT1 += tmpT2, tmpT1 = ", tmpT1)
+
+var tmpT3 = t1
+let tmpT4 = t2
+tmpT3 -= tmpT4
+print("tmpT3 -= tmpT4, tmpT3 = ", tmpT3)
+
+print("- t1 = ", -t1)
+
+/** 打印结果为
+
+t1 + t2 =  Test(x: 3, y: 6, z: 9)
+t1 - t2 =  Test(x: 1, y: 2, z: 3)
+t1 * t2 =  Test(x: 2, y: 8, z: 18)
+t1 / t2 =  Test(x: 2, y: 2, z: 2)
+t1 > t2 =  true
+t1 == t2 =  false
+t1 >= t2 =  true
+t1 < t2 =  false
+tmpT1 += tmpT2, tmpT1 =  Test(x: 3, y: 6, z: 9)
+tmpT3 -= tmpT4, tmpT3 =  Test(x: 1, y: 2, z: 3)
+- t1 =  Test(x: -2, y: -4, z: -6)
+*/
+
+```
 
 
 
@@ -461,7 +554,7 @@ Swift 的访问控制模型是基于 module 和 源文件的。在 Swift 文档�
 
 下标
 
-运算符重载
+
 
 嵌套类型
 

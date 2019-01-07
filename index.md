@@ -392,9 +392,51 @@ class Person {
 
 
 ### 构造函数继承规则：
+
 1.如果子类没有实现任何指定构造函数则会继承父类所有的指定构造函数和便利构造函数
+
 2.如果子类实现了自己的指定构造函数但没有完全覆盖父类的指定构造函数则不会继承父类的任何便利构造函数和未覆盖的父类的指定构造函数
+
 3.如果子类覆盖了父类所有的指定构造函数则自动继承父类所有的便利构造函数
+
+```
+class Person {
+    var name: String
+    var age: Int
+    // 指定构造函数
+    init(name: String, age: Int) {
+        self.name = name
+        self.age = age
+    }
+    // 指定构造函数
+    init(other: Int) {
+        self.name = ""
+        self.age = 1
+    }
+    // 便利构造函数
+    convenience init(flag: Int) {
+        self.init(name: "", age: 0)
+    }
+}
+
+class Teacher: Person {
+    // 覆盖父类指定构造函数
+    override init(name: String, age: Int) {
+        super.init(name: name, age: age)
+    }
+    // 覆盖父类指定构造函数
+    override init(other: Int) {
+        super.init(other: other)
+    }
+    init(haha: String) {
+        super.init(name: "haha", age: 30)
+    }
+}
+
+let teacher = Teacher(flag: 10)
+let teacher2 = Teacher(name: "gsd", age: 26)
+
+```
 
 
 ### 函数的重载与重写

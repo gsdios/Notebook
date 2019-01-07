@@ -451,7 +451,7 @@ Swift 的访问控制模型是基于 module 和 源文件的。在 Swift 文档�
 ## 运算符重载
 
 
-
+在Swift的官方文档中运算符重载叫做运算符函数（Operator Functions），顾名思义就是对已经有的运算符覆盖定义自己的函数实现。三元运算符(a？b：c)和默认的赋值运算符符(=)是不可重载的。话不多说，请直接看Demo：
 
 ```
 struct Test {
@@ -545,6 +545,36 @@ tmpT3 -= tmpT4, tmpT3 =  Test(x: 1, y: 2, z: 3)
 */
 
 ```
+
+### 自定义运算符
+
+除了重载标准的运算符我们还可以声明一些个性的运算符，但个性的运算符只能使用这些字符 / = - + * % < > ! & | ^ . ~
+新的运算符声明需在全局域使用operator关键字声明，可以声明为前缀，中缀或后缀的，分别用prefix、infix和postfix修饰
+
+```
+// 使用operator关键字声明 +++++
+postfix operator +++++
+
+postfix func +++++ (left: inout Test) {
+    left.x += 5
+    left.y += 5
+    left.z += 5
+}
+
+var t3 = Test(x: 2, y: 4, z: 8)
+
+t3+++++
+print("t3+++++ =", t3)
+
+/** 打印结果为
+
+t3+++++ = Test(x: 7, y: 9, z: 13)
+
+*/
+
+```
+
+
 
 
 

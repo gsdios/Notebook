@@ -686,29 +686,205 @@ Optional("大宝") Optional("二二二二") Optional("三仨叁③") Optional("�
 
 ```
 
-
-
-
-
-
-## =============================================================================================================================================================================================
-
 # 泛型
 
+## 泛型函数
+
+```
+func swapTwoValues<T>(a: inout T, b: inout T) {
+    let tempValue = a
+    a = b
+    b = tempValue
+}
+
+var a = 10
+var aa = 20
+swapTwoValues(a: &a, b: &aa)
+print(a, aa) // 打印结果：20 10
+
+var b = "b"
+var bb = "bb"
+swapTwoValues(a: &b, b: &bb)
+print(b, bb) // 打印结果：bb b
+
+```
+
+## 泛型类型
+
+```
+struct Stack<Element>{
+    var items = [Element]()
+    mutating func push(item:Element){
+        items.append(item)
+    }
+    mutating func pop()->Element{
+        return items.removeLast()
+    }
+}
+
+```
+
+## 泛型类型约束
+在下面的这个函数中，有两个类型约束，第一次类型参数C代表属于某个类，第二个参数P代表遵守某个协议。
+
+```
+func somFuntion<C: UIView, P: Hashable>(someClass: C, someProtocol: P) {
+
+}
+
+```
+```
+func containsValue<S:Equatable>(array: [S], valueToFind: S) -> Bool {
+    for value in array {
+        if value == valueToFind {
+            return true
+        }
+    }
+    return false
+}
+
+```
+
+## 关联类型
+
+在定义协议的时候，可以用一个或者多个关联类型作为定义协议的一部分，为某个类型提供了一个占位符，其实际类型会在实现协议的时候被指定，并用关键字typealias关键字来指定具体的关联类型
+
+```
+protocol Container {
+    associatedtype itemType
+    mutating func append(item: itemType)
+    var count: Int { get }
+    subscript(i: Int) -> itemType { get }
+}
+
+struct genericStack<Element>: Container {
+    var items = [Element]()
+    mutating func push(item: Element) {
+    items.append(item)
+    }
+    mutating func pop() -> Element {
+        return items.removeLast()
+    }
+
+    // Container 协议的实现部分
+    typealias ItemType = Element
+    mutating func append(item: ItemType) {
+        self.push(item: item)
+    }
+    var count: Int {
+        return items.count
+    }
+    subscript(i: Int) -> ItemType {
+        return items[i]
+    }
+}
+
+```
+
+## 泛型约束where子句
+
+类型约束能够让我们为泛型类型添加一些约束和条件，可以使用where子句来为关联类型添加约束
+
+```
+func allItemsMatch<C1: Container, C2: Container>(left: C1, right: C2) -> Bool 
+where C1.itemType == C2.itemType, C1.itemType: Equatable {
+    if left.count != right.count{
+        return false
+    }
+    for i in 0..<left.count {
+        if left[i] != right[i] {
+            return false
+        }
+    }
+    return true
+}
+
+```
 
 
-swift协议
+# swift协议
+
+## 属性
+
+协议可以要求遵循协议的类型提供特定名称和类型的实例属性或类型属性。协议不指定属性是存储属性还是计算属性，它只指定属性的名称和类型和读写控制。协议总是用var关键字来声明变量属性，在类型声明后加上{ set get }来表示属性是可读可写的，可读属性则用{ get }来表示。
+
+```
+protocol SomeProtocol {
+    var a: Int { get set }
+    var b: Int { get }
+}
+
+```
+
+另外在协议中还可以定义类型属性时，并使用static关键字修饰
+
+```
+protocol SomeProtocol {
+    static var a: Int { get set }
+    static var b: Int { get }
+}
+
+```
+
+## 方法
+
+协议可以要求遵循协议的类型实现某些指定的实例方法或类方法。在协议中声明这些方法时不需要大括号和方法体，可以在协议中定义具有可变参数的方法，和普通方法的定义方式相同。但是，不支持为协议中的方法的参数提供默认值。
+
+```
+protocol RandomNumberGenerator {
+    func random() -> Double
+}
+
+```
+
+## mutating关键字
+
+在值类型(即结构体和枚举)的实例方法中，如果将mutating关键字作为方法的前缀写在 func关键字之前，表示可以在该方法中修改它所属的实例以及实例的任意属性的值。如果你在协议中定义了一个实例方法，该方法会改变遵守该协议的类型的实例，那么在定义协议时需要在方法前加mutating关键字，这使得结构体和枚举能够遵循此协议并满足此方法要求。
+
+```
+
+
+```
+
+## 协议组合
+
+Protocol Composition，中文叫“协议组合”或“协议合成”，简单地来说就是把不同的协议组合起来以使目标对象限定在满足全部协议的一种方式。
+
+下面的例子中声明了一个叫Named的协议，提供 name （名字）这个属性，还有一个叫Aged的协议，提供 age（年龄）这个属性，然后可以用 & 这个操作符，以 Named & Aged 的形式将这两个协议组合起来就可以使传入的参数即满足 Named 又满足 Aged 了。
+
+```
+protocol Named {
+var name: String { get }
+}
+
+protocol Aged {
+var age: Int { get }
+}
+
+struct Person: Named, Aged {
+var name: String
+var age: Int
+}
+
+func wishHappyBirthday(to celebrator: Named & Aged) {
+print("Happy birthday, \(celebrator.name), you're \(celebrator.age)!")
+}
+
+let birthdayPerson = Person(name: "Malcolm", age: 21)
+wishHappyBirthday(to: birthdayPerson) // 打印结果：Happy birthday, Malcolm, you're 21!
+
+```
+
+
+## =========================================================================================================================================================
+
 1.struct和类都可以遵守协议，也可以限制协议只给类遵守，用 : class 标识
 
 2.协议可以制定构造函数
 
-3.类型别名和关联类型
-
 4.可以在协议扩展中实现协议中的某些方法（默认实现）
 
-5.协议聚合 protocol<p1, p2>
 
-6.泛型约束
 
 7.协议：可选协议方法
 

@@ -1,7 +1,7 @@
-# Swift(未完待续。。。)
+# Swift学习笔记
 
-
-# 可选型
+# I.swift概要
+## 可选型
 
 可选型是Swift语言的特色之一，用于表达一个变量/常量可以为nil或者非nil值。可选类型其本质是一个枚举型，包含none和some两种类型。Optional.none就是nil, 非nil的原始值会通过some(T)包装，这也是为什么在使用Optional的时候要拆包的原因, 就是为了从enum里取出来原始值。可选型表示方法如下：
 ```
@@ -12,7 +12,7 @@ nil在Objective-C中表示一个空指针；nil在Swift中不是空指针，nil�
 var view: UIView = nil //报错：Nil cannot initialize specified type 'UIView'
 var view: UIView? = nil //正确
 ```
-### 可选型解包
+#### 可选型解包
 ```
 // 解包方式1
 var name: String? = "令狐冲"
@@ -33,7 +33,7 @@ if let name = name {
     print("name 为 nil")
 }
 ```
-### 空合运算符
+#### 空合运算符
 空合运算符（nil coalecse）“a ?? b” 将对可选类型a进行空判断，如果a非nild就对其进行解包，否则就返回一个默认值b
 ```
 var name: String? = "鹿晗"
@@ -41,12 +41,12 @@ var address: String? = nil
 print((name ?? "XXX"),"来自", (address ?? "未知地区"))
 // print结果为：鹿晗 来自 未知地区
 ```
-### 可选链
+#### 可选链
 可选链(optional chaining)为一种可以在当前值可能为nil的可选值上请求和调用属性、方法及下标的方法。如果可选值有值，那么调用就会成功；如果可选值是nil，那么调用将返回nil。多个调用可以连接在一起形成一个调用链，如果其中任何一个节点为nil，整个调用链都会失败，即返回nil。
 ```
 let name = person.dog?.name?.lowercased()
 ```
-### 隐式可选型
+#### 隐式可选型
 变量或常量后加上!的都是隐式可选变量/常量。首先该变量或常量满足可选类型，其可被当成一般的变量/常量来使用，而不需要每次都验证是否有值。隐式可选型主要用在一个变量/常量在定义瞬间完成之后值一定会存在的情况，例如在类的初始化过程中等。
 ```
 
@@ -97,7 +97,7 @@ enum Animal {
 }
 
 ```
-### 嵌套枚举
+#### 嵌套枚举
 ```
 enum Area {
     enum ShenZhen {
@@ -112,7 +112,7 @@ enum Area {
 }
 
 ```
-### 关联值
+#### 关联值
 
 ```
 // 声明枚举Trade
@@ -136,7 +136,7 @@ switch trade {
 // print输出： buy(stock: "00700", amount: 100) 股票:00700, 数量:100
 
 ```
-### 方法和属性
+#### 方法和属性
 ```
 enum Device {
     case iPad, iPhone, AppleTV, AppleWatch
@@ -170,7 +170,7 @@ enum Device {
 }
 ```
 
-### 枚举&协议
+#### 枚举&协议
 Swift也允许你在枚举中使用协议(Protocols)和协议扩展(Protocol Extension)。
 
 ```
@@ -201,7 +201,7 @@ print(Trade.buy(stock: "00700", amount: 100).description)
 // print输出： 股票:00700, 数量:100
 
 ```
-### 枚举的扩展
+#### 枚举的扩展
 枚举也可以进行扩展，我们可以将枚举的case和method分离使得代码的可读性更强。
 
 ```
@@ -225,7 +225,7 @@ print(Trade.buy(stock: "00700", amount: 100).description)
 
 // print输出： 股票:00700, 数量:100
 ```
-### 枚举&泛型
+#### 枚举&泛型
 ```
 enum Theme<T: UIView> {
     case day(T)
@@ -249,7 +249,7 @@ Theme.night(v).apply()
 
 struct是值类型而class是引用类型，值类型的变量直接包含他们的数据，而引用类型的变量存储对他们的数据引用，因此对一个引用类型变量操作可能影响另一个引用类型变量所引用的对象。对于值类型都有他们自己的数据副本，因此对一个值类型变量操作不可能影响另一个值类型变量。相对于OC中的Struct，Swift中的Struct变得更加强大,不仅有成员变量,还多了成员方法,这些特性使它更加接近于一个类.
 
-### Struct的相对于Class的优缺点
+#### Struct的相对于Class的优缺点
 优点：
 
 - 安全性
@@ -270,7 +270,7 @@ struct是值类型而class是引用类型，值类型的变量直接包含他们
 作为面向对象的三大特征之一，继承让开发者高效得实现代码重用，但是struct不支持继承，不过好在struct支持协议,这也体现了Swift面向协议的编程思想
 
 
-### Swift中类和结构体的共同点
+#### Swift中类和结构体的共同点
 
 - 定义属性用于存储值
 - 定义方法用于提供功能
@@ -279,14 +279,14 @@ struct是值类型而class是引用类型，值类型的变量直接包含他们
 - 通过扩展以增加默认实现的功能
 - 实现协议以提供某种标准功能
 
-### Swift中类和结构体的不同点
+#### Swift中类和结构体的不同点
 
 - 结构体不具有继承性
 - 结构体没有析构器
 - 结构体不使用引用计数（值类型）
 
 
-### mutating关键字
+#### mutating关键字
 
 Swift中结构体和枚举可以定义自己的方法，但是默认情况下实例方法中是不可以修改自身属性值，当你需要修改自身属性值需要在函数前加mutating
 
@@ -305,7 +305,7 @@ struct Point {
 
 # 面向对象
 
-### 属性
+#### 属性
 - 存储型属性
 
 存储型属性就是存储特定类的一个常量或者变量。常量存储的属性使用let关键字定义，变量存储的属性使用var关键字定义
@@ -386,12 +386,12 @@ class Person {
 
 # 函数
 
-### 构造函数
+#### 构造函数
 
 构造函数是一种特殊的函数，主要用来在创建对象时做一些数据初始化工作。OC的初始化是沿着类继承关系链从父类开始逐级向子类初始化，而Swift的初始化是先从子类开始然后逐级向父类初始化，在调用父类构造函数之前,必须保证本类的属性已经完成初始化。Swift中非optional属性都必须在构造函数中设置初始值，从而保证对象在被实例化的时候属性都被正确地初始化
 
 
-### 构造函数继承规则：
+#### 构造函数继承规则：
 
 1.如果子类没有实现任何指定构造函数则会继承父类所有的指定构造函数和便利构造函数
 
@@ -439,7 +439,7 @@ let teacher2 = Teacher(name: "gsd", age: 26)
 ```
 
 
-### 函数的重载与重写
+#### 函数的重载与重写
 
 - 重载: overload
 
@@ -478,7 +478,7 @@ let teacher2 = Teacher(name: "gsd", age: 26)
 
 表示可以被任何人使用，包括override和继承
 
-### Modules和源文件
+#### Modules和源文件
 
 Swift 的访问控制模型是基于 module 和 源文件的。在 Swift 文档中对 module 和源文件的解释如下：
 
@@ -588,7 +588,7 @@ tmpT3 -= tmpT4, tmpT3 =  Test(x: 1, y: 2, z: 3)
 
 ```
 
-### 自定义运算符
+#### 自定义运算符
 
 除了重载标准的运算符我们还可以声明一些个性的运算符，但个性的运算符只能使用这些字符 / = - + * % < > ! & | ^ . ~
 新的运算符声明需在全局域使用operator关键字声明，可以声明为前缀，中缀或后缀的，分别用prefix、infix和postfix修饰
@@ -620,7 +620,7 @@ t3+++++ = Test(x: 7, y: 9, z: 13)
 
 下标可以定义在类、结构体和枚举中，是访问元素的快捷方式，可以使用下标的索引设置和获取值。例如用下标访问一个 Array实例中的元素可以写作arr[index]，访问Dictionary实例中的元素可以写作dict[key]。一个类型可以定义多个下标，通过不同索引类型进行重载。下标不限于一维，你可以定义具有多个入参的下标满足自定义类型的需求。
 
-### 下标语法
+#### 下标语法
 
 定义下标使用 subscript 关键字，指定一个或多个输入参数和一个返回类型；与实例方法不同的是，下标可以设定为读写或只读。这种行为通过设置 getter 和 setter 实现，有点类似计算型属性：
 
@@ -875,30 +875,87 @@ wishHappyBirthday(to: birthdayPerson) // 打印结果：Happy birthday, Malcolm,
 
 ```
 
+# II.Swift函数派发机制
 
-## =========================================================================================================================================================
+```
+protocol Speakable {
+    func speak();
+}
 
-1.struct和类都可以遵守协议，也可以限制协议只给类遵守，用 : class 标识
+extension Speakable {
+    func speak() {
+        print("SpeakAble ah ah ah")
+    }
+    func laugh() {
+        print("SpeakAble ge ge ge ...")
+    }
+}
 
-2.协议可以制定构造函数
+class Person: Speakable {
+    func speak() {
+        print("Person hello")
+    }
+    func laugh() {
+        print("Person ha ha ha...")
+    }
+}
 
-4.可以在协议扩展中实现协议中的某些方法（默认实现）
+let person = Person()
+let speaker: Speakable = person
+
+person.laugh() // Person ha ha ha...
+speaker.laugh() // SpeakAble ge ge ge ...
+
+```
+
+
+函数派发就是处理如何去调用一个函数的问题。了解函数派发机制有助于你写出高性能的代码，同时也能够解释很多swift里的奇怪的行为。
+编译型语言有三种常见的函数派发方式：直接派发(Direct Dispatch)、 函数表派发(Table Dispatch) 和 消息派发(Message Dispatch)。C++ 默认使用直接派发，但可以通过加上 virtual修饰符来改成函数表派发。而OC则总是使用消息机制派发，一些开发者也会通过在OC中混编入C以利用C语言的直接函数派发来实现提升性能的目标。
+
+下面请看demo：
+
+## 函数表派发(Table Dispatch)
+函数表派发是编译型语言实现动态行为最常见的实现方式。函数表使用了一个数组来存储类声明的每一个函数的指针。大部分语言把这个称为“virtual table”(虚函数表)， Swift 里称为 “witness table”。每一个类都会维护一个函数表，里面记录着类所有需要通过函数表派发的函数，如果在本类中override了父类函数被的话表里面只会保存被override 之后的函数。一个子类在声明体内新添加的函数都会被插入到这个函数表的后面，运行时会根据这一个表去决定实际要被调用的函数。
+demo中创建了一个父类Base和一个继承自Base的Test类，其中Test类的metadata内存布局图如下：
 
 
 
-7.协议：可选协议方法
 
-8.异常处理
 
-9.控制转移：defer
+当一个函数被调用时, 会经历下面的几个过程:
+读取对象的函数表
+从函数表中取出目标函数地址
+跳转到目标函数地址执行
+查表是一种简单、易实现、而且性能可预知的方式， 然而这种派发方式比起直接派发的性能还是差了一点。另外这种函数表派发的缺陷在于函数表无法拓展，子类会在虚数函数表的后面插入新的函数，没有位置可以让extension安全地插入函数。
 
-## 类型检查和转换
+从这个表中可以发现Test的metadata函数表没有包含dynamicHello和staticHello这两个方法，那是因为dynamicHello方法通过消息机制派发，staticHello方法通过静态调用方式直接派发。
 
-1.检查 is
+## 直接派发 (Direct Dispatch)
+直接派发是最快的， 不止是因为需要调用的指令集会更少，并且编译器还能够有很大的优化空间，例如函数内联等。然而静态调用对于编程来说也就意味着因为缺乏动态性所以没办法支持继承。
 
-2.转换 as
 
-3.nsobject anyobject any
+
+## 消息机制派发 (Message Dispatch )
+消息机制是调用函数最动态的方式，这样的机制催生了 KVO，UIAppearence 和 CoreData 等功能。这种运作方式的关键在于开发者可以在运行时改变函数的行为，不止可以通过 swizzling 来改变，甚至可以用 isa-swizzling 修改对象的继承关系，可以在面向对象的基础上实现自定义派发。
+OC中的消息机制我们已经很熟悉了，下面我们重点看下swift中如何在加入了函数表派发和直接派发机制之后又兼容了消息派发机制的。
+
+再看一眼Test的metadata内存布局图：
+
+从图中我们可以看到，其实swift_class_t是继承自objc_class的，这就意味着swift从一出生开始就继承了OC爸爸的强大动态性的基因，所以在swift中实现各种动态功能也自然不在话下，只是看swift愿不愿意这样做的问题。
+
+在demo中我们给Test类添加了一个动态函数@objc dynamic func dynamicHello()，然后我们在上面的函数表中也确实没有看到dynamicHello的影子，那么它到底是如何被Test类管理的呢，请看以下实验代码：
+
+
+在控制台输出的反汇编代码中，我们看到了熟悉的messagesend函数，这也就证明了dynamicHello确实是通过消息机制派发的，那么到底dynamicHello函数被保存在了什么位置呢，我们继续往下看：
+这里我添加了一个oc++的文件，文件内部模拟了一个swift_class_t结构体，我们传递一个swift对象给printSwiftObj函数，在这个函数内部获取swift对象的类metadata并从中找出方法动态方法列表，然后从这个动态列表中查询dynamicHello的踪迹。
+
+
+
+
+
+
+
+
 
 
 

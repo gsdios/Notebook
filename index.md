@@ -41,9 +41,9 @@
         * [mutating关键字](#mutating关键字)
         * [协议组合](#协议组合)
 * [II.Swift函数派发机制](#II.Swift函数派发机制)
-   * [函数表派发(Table Dispatch)](#函数表派发(Table Dispatch))
-   * [直接派发(Direct Dispatch)](#直接派发(Direct Dispatch))
-   * [消息机制派发(Message Dispatch)](#消息机制派发(Message Dispatch))
+    * [函数表派发(Table Dispatch)](#函数表派发(Table Dispatch))
+    * [直接派发(Direct Dispatch)](#直接派发(Direct Dispatch))
+    * [消息机制派发(Message Dispatch)](#消息机制派发(Message Dispatch))
    
 
 

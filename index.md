@@ -41,9 +41,9 @@
         * [mutating关键字](#mutating关键字)
         * [协议组合](#协议组合)
 * [II.Swift内存布局](#II.Swift内存布局)
-    *[class](#clss)
+    * [class](#clss)
 * [III.Swift函数派发机制](#II.Swift函数派发机制)
-    * [函数表派发(Table Dispatch)](#函数表派发(Table Dispatch))
+    * [函数表派发(Table Dispatch)](#函数表派发\(Table Dispatch\))
     * [直接派发(Direct Dispatch)](#直接派发(Direct Dispatch))
     * [消息机制派发(Message Dispatch)](#消息机制派发(Message Dispatch))
 
@@ -926,7 +926,7 @@ wishHappyBirthday(to: birthdayPerson) // 打印结果：Happy birthday, Malcolm,
 ```
 
 # II.Swift内存布局
-#### class
+## class
 
 Swift中的实例对象和Objective-C中的实例对象对应的objc_object结构体类似，第一个成员是isa指针指向Swift的类对象，我们以Test的实例对象t为例验证一下：
 

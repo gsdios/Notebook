@@ -46,6 +46,7 @@
     * [函数表派发(Table Dispatch)](#函数表派发\(Table Dispatch\))
     * [直接派发(Direct Dispatch)](#直接派发(Direct Dispatch))
     * [消息机制派发(Message Dispatch)](#消息机制派发(Message Dispatch))
+* [IV.Swift闭包](#IV.Swift闭包)
 
 
 
@@ -1029,13 +1030,192 @@ OC中的消息机制我们已经很熟悉了，下面我们重点看下swift中�
 
 ![](imgs/d09.png)
 
-总结:
 
-* 值类型总是会使用直接派发，简单易懂
-* 而协议和类的 extension 都会使用直接派发
-* NSObject 的 extension 会使用消息机制进行派发
+## Swift方法派发机制规则总结:
+
+* 值类型总是会使用直接派发
+* 而协议和类的extension都会使用直接派发
+* NSObject 的extension会使用消息机制进行派发
 * NSObject 声明作用域里的函数都会使用函数表进行派发
 * 协议里声明的，并且带有默认实现的函数会使用函数表进行派发
+
+
+# IV.Swift闭包
+
+## 变量捕获
+swift闭包默认捕获变量的引用
+
+```
+var a = 10
+let test = {
+    return a + 5
+}
+a = 0
+print(a) // 0
+print(test()) // 5
+
+```
+OC默认捕获变量值
+
+```
+int a = 10;
+int(^test)() = ^{
+    return a + 5;
+};
+a = 0;
+printf("%d", a); // 0
+printf("%d", test()); // 15
+
+```
+
+
+## 循环引用
+
+以下哪段代码会造成循环引用呢？
+
+代码1：
+```
+class ViewController: UIViewController {
+
+var clk: () -> () = {}
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1) {
+        print("show \(self)")
+    }
+}
+
+}
+
+```
+
+代码2：
+```
+
+class ViewController: UIViewController {
+
+var clk: () -> () = {}
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    self.clk = {
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1) {
+            print("show \(self)")
+        }
+    }
+}
+
+}
+
+```
+代码3：
+```
+
+class ViewController: UIViewController {
+
+var clk: () -> () = {}
+override func viewDidLoad() {
+super.viewDidLoad()
+
+    self.clk = {
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1) {
+            DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 1) {
+                print("show \(self)")
+            }
+        }
+    }
+}
+
+}
+
+```
+
+测试结果是：除了第一个，其它都会造成循环引用。这是为什么呢？
+为了方便查找这个问题的原因，我用OC写了一段测试代码，然后用clang -rewrite-objc命令生成cpp代码并从中查找一些线索。
+
+```
+static void _I_ViewController_viewDidLoad(ViewController * self, SEL _cmd) {
+
+    ((void (*)(__rw_objc_super *, SEL))(void *)objc_msgSendSuper)((__rw_objc_super){(id)self, (id)class_getSuperclass(objc_getClass("ViewController"))}, sel_registerName("viewDidLoad"));
+
+    ((void (*)(id, SEL, void (*)()))(void *)objc_msgSend)((id)self, sel_registerName("setBlk:"), ((void (*)())&__ViewController__viewDidLoad_block_impl_2((void *)__ViewController__viewDidLoad_block_func_2, &__ViewController__viewDidLoad_block_desc_2_DATA, self, 570425344)));
+
+    ((void (*(*)(id, SEL))())(void *)objc_msgSend)((id)self, sel_registerName("blk"))();
+}
+
+struct __ViewController__viewDidLoad_block_impl_2 {
+    struct __block_impl impl;
+    struct __ViewController__viewDidLoad_block_desc_2* Desc;
+    ViewController *self;
+    __ViewController__viewDidLoad_block_impl_2(void *fp, struct __ViewController__viewDidLoad_block_desc_2 *desc, ViewController *_self, int flags=0) : self(_self) {
+        impl.isa = &_NSConcreteStackBlock;
+        impl.Flags = flags;
+        impl.FuncPtr = fp;
+        Desc = desc;
+    }
+};
+
+static void __ViewController__viewDidLoad_block_func_2(struct __ViewController__viewDidLoad_block_impl_2 *__cself) {
+    ViewController *self = __cself->self; // bound by copy
+
+    dispatch_after(dispatch_time((0ull), (int64_t)(1 * 1000000000ull)), dispatch_get_main_queue(), ((void (*)())&__ViewController__viewDidLoad_block_impl_1((void *)__ViewController__viewDidLoad_block_func_1, &__ViewController__viewDidLoad_block_desc_1_DATA, self, 570425344)));
+}
+
+
+```
+
+```
+struct __ViewController__viewDidLoad_block_impl_1 {
+    struct __block_impl impl;
+    struct __ViewController__viewDidLoad_block_desc_1* Desc;
+    ViewController *self;
+    __ViewController__viewDidLoad_block_impl_1(void *fp, struct __ViewController__viewDidLoad_block_desc_1 *desc, ViewController *_self, int flags=0) : self(_self) {
+        impl.isa = &_NSConcreteStackBlock;
+        impl.Flags = flags;
+        impl.FuncPtr = fp;
+        Desc = desc;
+    }
+};
+
+static void __ViewController__viewDidLoad_block_func_1(struct __ViewController__viewDidLoad_block_impl_1 *__cself) {
+    ViewController *self = __cself->self; // bound by copy
+
+    dispatch_after(dispatch_time((0ull), (int64_t)(1 * 1000000000ull)), dispatch_get_main_queue(), ((void (*)())&__ViewController__viewDidLoad_block_impl_0((void *)__ViewController__viewDidLoad_block_func_0, &__ViewController__viewDidLoad_block_desc_0_DATA, self, 570425344)));
+}
+
+```
+
+
+```
+
+struct __ViewController__viewDidLoad_block_impl_0 {
+    struct __block_impl impl;
+    struct __ViewController__viewDidLoad_block_desc_0* Desc;
+    ViewController *self;
+    __ViewController__viewDidLoad_block_impl_0(void *fp, struct __ViewController__viewDidLoad_block_desc_0 *desc, ViewController *_self, int flags=0) : self(_self) {
+        impl.isa = &_NSConcreteStackBlock;
+        impl.Flags = flags;
+        impl.FuncPtr = fp;
+        Desc = desc;
+    }
+};
+
+static void __ViewController__viewDidLoad_block_func_0(struct __ViewController__viewDidLoad_block_impl_0 *__cself) {
+    ViewController *self = __cself->self; // bound by copy
+
+    printf("%p", self);
+}
+
+```
+
+![](imgs/d12.png)
+
+![](imgs/d13.png)
+
+
+
+
 
 
 

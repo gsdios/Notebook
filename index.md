@@ -914,13 +914,21 @@ speaker.laugh() // SpeakAble ge ge ge ...
 
 下面请看demo：
 
+![](imgs/d01.png)
+
 ## 函数表派发(Table Dispatch)
 函数表派发是编译型语言实现动态行为最常见的实现方式。函数表使用了一个数组来存储类声明的每一个函数的指针。大部分语言把这个称为“virtual table”(虚函数表)， Swift 里称为 “witness table”。每一个类都会维护一个函数表，里面记录着类所有需要通过函数表派发的函数，如果在本类中override了父类函数被的话表里面只会保存被override 之后的函数。一个子类在声明体内新添加的函数都会被插入到这个函数表的后面，运行时会根据这一个表去决定实际要被调用的函数。
 demo中创建了一个父类Base和一个继承自Base的Test类，其中Test类的metadata内存布局图如下：
 
+![](imgs/d08.png)
 
+![](imgs/d10.png)
 
+![](imgs/d02.png)
 
+通过反汇编观察函数表派发的大致实现方式如下：
+
+![](imgs/d03.png)
 
 当一个函数被调用时, 会经历下面的几个过程:
 读取对象的函数表
@@ -933,21 +941,34 @@ demo中创建了一个父类Base和一个继承自Base的Test类，其中Test类
 ## 直接派发 (Direct Dispatch)
 直接派发是最快的， 不止是因为需要调用的指令集会更少，并且编译器还能够有很大的优化空间，例如函数内联等。然而静态调用对于编程来说也就意味着因为缺乏动态性所以没办法支持继承。
 
-
+![](imgs/d04.png)
 
 ## 消息机制派发 (Message Dispatch )
-消息机制是调用函数最动态的方式，这样的机制催生了 KVO，UIAppearence 和 CoreData 等功能。这种运作方式的关键在于开发者可以在运行时改变函数的行为，不止可以通过 swizzling 来改变，甚至可以用 isa-swizzling 修改对象的继承关系，可以在面向对象的基础上实现自定义派发。
+消息机制是调用函数最动态的方式，这样的机制催生了KVO，UIAppearence和CoreData等功能。这种运作方式的关键在于开发者可以在运行时改变函数的行为，不止可以通过swizzling来改变，甚至可以用isa-swizzling修改对象的继承关系，可以在面向对象的基础上实现自定义派发。
 OC中的消息机制我们已经很熟悉了，下面我们重点看下swift中如何在加入了函数表派发和直接派发机制之后又兼容了消息派发机制的。
 
 再看一眼Test的metadata内存布局图：
+
+![](imgs/d02.png)
 
 从图中我们可以看到，其实swift_class_t是继承自objc_class的，这就意味着swift从一出生开始就继承了OC爸爸的强大动态性的基因，所以在swift中实现各种动态功能也自然不在话下，只是看swift愿不愿意这样做的问题。
 
 在demo中我们给Test类添加了一个动态函数@objc dynamic func dynamicHello()，然后我们在上面的函数表中也确实没有看到dynamicHello的影子，那么它到底是如何被Test类管理的呢，请看以下实验代码：
 
 
+![](imgs/d05.png)
+
 在控制台输出的反汇编代码中，我们看到了熟悉的messagesend函数，这也就证明了dynamicHello确实是通过消息机制派发的，那么到底dynamicHello函数被保存在了什么位置呢，我们继续往下看：
+
 这里我添加了一个oc++的文件，文件内部模拟了一个swift_class_t结构体，我们传递一个swift对象给printSwiftObj函数，在这个函数内部获取swift对象的类metadata并从中找出方法动态方法列表，然后从这个动态列表中查询dynamicHello的踪迹。
+
+![](imgs/d06.png)
+
+
+![](imgs/d07.png)
+
+
+![](imgs/d09.png)
 
 
 

@@ -875,6 +875,22 @@ wishHappyBirthday(to: birthdayPerson) // 打印结果：Happy birthday, Malcolm,
 
 ```
 
+# II.Swift内存布局
+#### class
+
+Swift中的实例对象和Objective-C中的实例对象对应的objc_object结构体类似，第一个成员是isa指针指向Swift的类对象，我们以Test的实例对象t为例验证一下：
+
+![](imgs/d11.png)
+
+上例中的t是Test类的示例对象，那么Test类的metadata内存布局又是怎样的呢？这里我添加了一个oc++的文件，文件内部模拟了一个swift_class_t结构体，我们传递一个Test对象t给printSwiftObj函数，在这个函数内部获取t的类metadata并分析其内存布局。
+
+![](imgs/d08.png)
+
+![](imgs/d10.png)
+
+![](imgs/d02.png)
+
+
 # II.Swift函数派发机制
 
 ```

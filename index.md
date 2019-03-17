@@ -984,13 +984,6 @@ speaker.laugh() // SpeakAble ge ge ge ...
 
 ## 函数表派发(Table Dispatch)
 函数表派发是编译型语言实现动态行为最常见的实现方式。函数表使用了一个数组来存储类声明的每一个函数的指针。大部分语言把这个称为“virtual table”(虚函数表)， Swift 里称为 “witness table”。每一个类都会维护一个函数表，里面记录着类所有需要通过函数表派发的函数，如果在本类中override了父类函数被的话表里面只会保存被override 之后的函数。一个子类在声明体内新添加的函数都会被插入到这个函数表的后面，运行时会根据这一个表去决定实际要被调用的函数。
-demo中创建了一个父类Base和一个继承自Base的Test类，其中Test类的metadata内存布局图如下：
-
-![](imgs/d08.png)
-
-![](imgs/d10.png)
-
-![](imgs/d02.png)
 
 通过反汇编观察函数表派发的大致实现方式如下：
 
